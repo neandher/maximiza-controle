@@ -1,7 +1,8 @@
 var Inputmask = {
     init: function () {
         $(".maskPhoneNumber").inputmask("mask", {
-            mask: "(999) 999-99999",
+            mask: "(99) 99999-9999",
+            removeMaskOnSubmit: true
         });
 
         $(".maskCnpj").inputmask("mask", {

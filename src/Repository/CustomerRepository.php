@@ -20,16 +20,39 @@ class CustomerRepository extends BaseRepository
         $routeParams = $pagination->getRouteParams();
 
         $qb = $this->createQueryBuilder('customer')
+            ->distinct(true)
             ->innerJoin('customer.state', 'state')
             ->addSelect('state')
             ->innerJoin('customer.user', 'user')
             ->addSelect('user')
+            ->leftJoin('customer.customerAddresses', 'customerAddresses')
+            ->addSelect('customerAddresses')
+            ->leftJoin('customerAddresses.address', 'address')
+            ->addSelect('address')
+            ->leftJoin('address.uf', 'uf')
+            ->addSelect('uf')
+            ->leftJoin('customer.customerBrands', 'customerBrands')
+            ->addSelect('customerBrands')
+            ->leftJoin('customerBrands.brand', 'brand')
+            ->addSelect('brand')
+            /*->leftJoin('customer.customerObservations', 'customerObservations')
+            ->addSelect('customerObservations')
+            ->leftJoin('customerObservations.user', 'customerObservationUser')
+            ->addSelect('customerObservationUser')*/
         ;
 
         if (isset($routeParams['search']) && !empty($routeParams['search'])) {
             $qb->andWhere(
                 $qb->expr()->like('customer.name', ':search')
             )->setParameter('search', '%' . $routeParams['search'] . '%');
+        }
+
+        if (isset($routeParams['state']) && !empty($routeParams['state'])) {
+            $qb->andWhere('state.id = :state')->setParameter('state', $routeParams['state']);
+        }
+
+        if (isset($routeParams['city']) && !empty($routeParams['city'])) {
+            $qb->andWhere('address.city like :city')->setParameter('city', '%'.$routeParams['city'].'%');
         }
 
         $qb = $this->addOrderingQueryBuilder($qb, $routeParams);

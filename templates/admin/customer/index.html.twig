@@ -38,10 +38,18 @@
                         <option value=""></option>
                         {% for state in states %}
                             <option value="{{ state.id }}"
-                                    {% if app.request.query.has('state') %}{% if app.request.query.get('state') == customer.id %}selected{% endif %}{% endif %}>{{ state.name }}
+                                    {% if app.request.query.has('state') %}{% if app.request.query.get('state') == state.id %}selected{% endif %}{% endif %}>{{ state.name }}
                             </option>
                         {% endfor %}
                     </select>
+                </div>
+                <div class="col-lg-3 m--margin-bottom-10-tablet-and-mobile">
+                    <label for="city">
+                        {{ 'address.fields.city'|trans }}:
+                    </label>
+                    <input type="text" class="form-control m-input m-input--solid" data-col-index="0"
+                           placeholder="{{ 'address.fields.city'|trans }}" name="city" id="city"
+                           value="{% if app.request.query.has('city') %}{{ app.request.query.get('city') }}{% endif %}">
                 </div>
             </div>
             <div class="m-separator m-separator--md m-separator--dashed"></div>
@@ -73,7 +81,6 @@
 
         {% block table_tr_th %}
             <tr>
-                <th>ID</th>
                 <th>
                     <a href="{{ path('admin_customer_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('name') }}">
                         {{ 'resource.fields.name'|trans }}
@@ -82,11 +89,6 @@
                 <th>
                     <a href="{{ path('admin_customer_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('email') }}">
                         {{ 'customer.fields.email'|trans }}
-                    </a>
-                </th>
-                <th>
-                    <a href="{{ path('admin_customer_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('cnpj') }}">
-                        {{ 'customer.fields.cnpj'|trans }}
                     </a>
                 </th>
                 <th>
@@ -99,6 +101,8 @@
                         {{ 'customerState.title_single'|trans }}
                     </a>
                 </th>
+                <th>{{ 'address.title'|trans }}</th>
+                <th>{{ 'brand.title'|trans }}</th>
                 <th>
                     <a href="{{ path('admin_customer_index') ~ pagination.buildQuery('sorting') ~ pagination.sortingFieldQuery('user.firstName') }}">
                         {{ 'user.title_single'|trans }}
@@ -116,12 +120,31 @@
         {% block table_tr_td %}
             {% for customer in customers %}
                 <tr>
-                    <td>{{ customer.id }}</td>
-                    <td>{{ customer.name }}</td>
+                    <td style="font-weight: 400">
+                        <a href="{{ path('admin_customer_edit', {'id': customer.id}) }}" title="Editar">
+                            {{ customer.name }}
+                        </a>
+                    </td>
                     <td>{{ customer.email }}</td>
-                    <td>{{ customer.cnpj }}</td>
                     <td>{{ customer.phoneNumber }}</td>
                     <td>{{ customer.state.name }}</td>
+                    <td>
+                        {% for addresses in customer.customerAddresses %}
+                            <span class="m-badge m-badge--success m-badge--wide"
+                                  style="margin-bottom: 15px; text-align: left">
+								{{ addresses.address.street }} <br> {{ addresses.address.district }}
+                                - {{ addresses.address.city }} - {{ addresses.address.uf.code }}
+							</span><br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for brands in customer.customerBrands %}
+                            <span class="m-badge m-badge--success m-badge--wide"
+                                  style="margin-bottom: 15px; text-align: left">
+								{{ brands.brand.name }}
+							</span><br>
+                        {% endfor %}
+                    </td>
                     <td>{{ customer.user.fullName }}</td>
                     <td>{{ customer.createdAt|date('d/m/Y H:i') }}</td>
                     <td>

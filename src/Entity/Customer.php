@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Resource\Model\TimestampableTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -68,6 +69,7 @@ class Customer
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\CustomerObservations", mappedBy="customer", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OrderBy(value={"createdAt" = "DESC"})
      * @Assert\Valid()
      */
     private $customerObservations;

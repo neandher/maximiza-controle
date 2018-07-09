@@ -3,11 +3,12 @@
 namespace App\EventListener;
 
 use App\Entity\Customer;
+use App\Entity\CustomerObservations;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class CustomerSubscriber implements EventSubscriber
+class CustomerObservationSubscriber implements EventSubscriber
 {
     /**
      * @var TokenStorageInterface
@@ -15,7 +16,7 @@ class CustomerSubscriber implements EventSubscriber
     private $tokenStorage;
 
     /**
-     * CustomerSubscriber constructor.
+     * CustomerObservationSubscriber constructor.
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(TokenStorageInterface $tokenStorage)
@@ -35,11 +36,11 @@ class CustomerSubscriber implements EventSubscriber
 
     public function prePersist(LifecycleEventArgs $args)
     {
-        /** @var Customer $customer */
-        $customer = $args->getObject();
+        /** @var CustomerObservations $customer */
+        $customerObservation = $args->getObject();
 
-        if ($customer instanceof Customer && $token = $this->tokenStorage->getToken()) {
-            $customer->setUser($token->getUser());
+        if ($customerObservation instanceof CustomerObservations && $token = $this->tokenStorage->getToken()) {
+            $customerObservation->setUser($token->getUser());
         }
     }
 }
